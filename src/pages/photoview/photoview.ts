@@ -1,6 +1,7 @@
 import {NavParams} from 'ionic-angular';
 import {PhotoViewer} from '@ionic-native/photo-viewer';
 import {Component, ElementRef, ViewChild} from '@angular/core';
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'page-photoview',
@@ -15,7 +16,8 @@ export class Photoview {
   private _CONTEXT: any;
 
   constructor(public navParams: NavParams,
-              private pv: PhotoViewer) {
+              private pv: PhotoViewer,
+              private _sanitizer: DomSanitizer) {
     this.photoLocation = navParams.get("photo");
     console.log(this.photoLocation);
     //pv.show(this.photoLocation);
@@ -36,10 +38,18 @@ export class Photoview {
   }
 
   setupCanvas() {
-    this._CONTEXT = this._CANVAS.getContext('2d');
+    let ctx = this._CANVAS.getContext('2d');
+    let image = new Image();
+    image.onload = function () {
+      ctx.drawImage(image, 0,0);
+    };
+    let imglocation = this._sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'
+      + this.photoLocation);
+    image.src = imglocation;
+
     //this._CONTEXT.image = this.photoLocation;
     //this._CONTEXT.fillRect(0, 0, window.innerWidth, window.innerHeight);
-    this._CONTEXT.background; //??
+    // this._CONTEXT.background; //??
     /*let background = new Image();
     background.src = this.photoLocation;*/
     //background.onload = () => {
