@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {Component} from '@angular/core';
+import {NavController} from 'ionic-angular';
 import {Camera, CameraOptions} from "@ionic-native/camera";
+import {Photoview} from "../photoview/photoview";
 
 @Component({
   selector: 'page-home',
@@ -12,7 +13,8 @@ export class HomePage {
     quality: 100,
     destinationType: this.camera.DestinationType.FILE_URI,
     encodingType: this.camera.EncodingType.JPEG,
-    mediaType: this.camera.MediaType.PICTURE
+    mediaType: this.camera.MediaType.PICTURE,
+    saveToPhotoAlbum: true
   };
 
   constructor(public navCtrl: NavController,
@@ -21,11 +23,14 @@ export class HomePage {
 
   useCamera() {
     this.camera.getPicture(this.options).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64 (DATA_URL):
       let base64Image = 'data:image/jpeg;base64,' + imageData;
+      console.log(imageData);
+
+      this.navCtrl.push(Photoview, {
+        photo: imageData
+      });
     }, (err) => {
-      // Handle error
+      console.log(err);
     });
   }
 }
